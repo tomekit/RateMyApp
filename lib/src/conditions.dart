@@ -178,8 +178,7 @@ class DoNotOpenAgainCondition extends DebuggableCondition {
 
   @override
   bool onEventOccurred(RateMyAppEventType eventType) {
-    if (eventType == RateMyAppEventType.rateButtonPressed ||
-        eventType == RateMyAppEventType.noButtonPressed) {
+    if (eventType == RateMyAppEventType.rateButtonPressed) { // eventType == RateMyAppEventType.noButtonPressed
       doNotOpenAgain = true;
       return true;
     }
