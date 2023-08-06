@@ -101,17 +101,17 @@ class RateMyAppDialog extends StatelessWidget {
           validator: () =>
               listener == null || listener!(RateMyAppDialogButton.rate),
         ),
+        RateMyAppNoButton(
+          rateMyApp,
+          text: noButton,
+          validator: () =>
+          listener == null || listener!(RateMyAppDialogButton.no),
+        ),
         RateMyAppLaterButton(
           rateMyApp,
           text: laterButton,
           validator: () =>
               listener == null || listener!(RateMyAppDialogButton.later),
-        ),
-        RateMyAppNoButton(
-          rateMyApp,
-          text: noButton,
-          validator: () =>
-              listener == null || listener!(RateMyAppDialogButton.no),
         ),
       ];
 }
