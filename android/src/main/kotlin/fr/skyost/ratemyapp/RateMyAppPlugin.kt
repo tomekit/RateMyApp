@@ -6,9 +6,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import com.google.android.play.core.review.ReviewInfo
-import com.google.android.play.core.review.ReviewManager
-import com.google.android.play.core.review.ReviewManagerFactory
+import androidx.annotation.NonNull
+//import com.google.android.play.core.review.ReviewInfo
+//import com.google.android.play.core.review.ReviewManager
+//import com.google.android.play.core.review.ReviewManagerFactory
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -26,22 +27,22 @@ public class RateMyAppPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private var context: Context? = null
     private lateinit var channel: MethodChannel
 
-    private var reviewInfo: ReviewInfo? = null
+//    private var reviewInfo: ReviewInfo? = null
 
-    override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "rate_my_app")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
     }
 
-    override fun onMethodCall(call: MethodCall, result: Result) {
+    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             "launchNativeReviewDialog" -> requestReview(result)
             "isNativeDialogSupported" -> {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || !isPlayStoreInstalled()) {
                     result.success(false)
                 } else {
-                    cacheReviewInfo(result)
+//                    cacheReviewInfo(result)
                 }
             }
             "launchStore" -> result.success(goToPlayStore(call.argument<String>("appId")))
@@ -49,7 +50,7 @@ public class RateMyAppPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
-    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
         context = null
     }
@@ -75,28 +76,30 @@ public class RateMyAppPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      *
      * @param result The method channel result object.
      */
-    private fun cacheReviewInfo(result: Result) {
-        if (context == null) {
-            result.error("context_is_null", "Android context not available.", null)
-            return
-        }
-        val manager = ReviewManagerFactory.create(context!!)
-        val request = manager.requestReviewFlow()
-        request.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                reviewInfo = task.result
-                result.success(true)
-            } else {
-                result.success(false)
-            }
-        }
-    }
+
+//    private fun cacheReviewInfo(result: Result) {
+//        if (context == null) {
+//            result.error("context_is_null", "Android context not available.", null)
+//            return
+//        }
+//        val manager = ReviewManagerFactory.create(context!!)
+//        val request = manager.requestReviewFlow()
+//        request.addOnCompleteListener { task ->
+//            if (task.isSuccessful) {
+//                reviewInfo = task.result
+//                result.success(true)
+//            } else {
+//                result.success(false)
+//            }
+//        }
+//    }
 
     /**
      * Requests a review.
      *
      * @param result The method channel result object.
      */
+
     private fun requestReview(result: Result) {
         if (context == null) {
             result.error("context_is_null", "Android context not available.", null)
@@ -105,19 +108,19 @@ public class RateMyAppPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         if (activity == null) {
             result.error("activity_is_null", "Android activity not available.", null)
         }
-        val manager = ReviewManagerFactory.create(context!!)
-        if (reviewInfo != null) {
-            launchReviewFlow(result, manager, reviewInfo!!)
-            return
-        }
-        val request = manager.requestReviewFlow()
-        request.addOnCompleteListener { task ->
-            when {
-                task.isSuccessful -> launchReviewFlow(result, manager, task.result)
-                task.exception != null -> result.error(task.exception!!.javaClass.name, task.exception!!.localizedMessage, null)
-                else -> result.success(false)
-            }
-        }
+//        val manager = ReviewManagerFactory.create(context!!)
+//        if (reviewInfo != null) {
+//            launchReviewFlow(result, manager, reviewInfo!!)
+//            return
+//        }
+//        val request = manager.requestReviewFlow()
+//        request.addOnCompleteListener { task ->
+//            when {
+//                task.isSuccessful -> launchReviewFlow(result, manager, task.result)
+//                task.exception != null -> result.error(task.exception!!.javaClass.name, task.exception!!.localizedMessage, null)
+//                else -> result.success(false)
+//            }
+//        }
     }
 
     /**
@@ -127,21 +130,23 @@ public class RateMyAppPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      * @param manager The review manager.
      * @param reviewInfo The review info object.
      */
-    private fun launchReviewFlow(result: Result, manager: ReviewManager, reviewInfo: ReviewInfo) {
-        val flow = manager.launchReviewFlow(activity!!, reviewInfo)
-        flow.addOnCompleteListener { task ->
-            run {
-                this.reviewInfo = null
-                result.success(task.isSuccessful)
-            }
-        }
-    }
+
+//    private fun launchReviewFlow(result: Result, manager: ReviewManager, reviewInfo: ReviewInfo) {
+//        val flow = manager.launchReviewFlow(activity!!, reviewInfo)
+//        flow.addOnCompleteListener { task ->
+//            run {
+//                this.reviewInfo = null
+//                result.success(task.isSuccessful)
+//            }
+//        }
+//    }
 
     /**
      * Returns whether the Play Store is installed on the current device.
      *
      * @return Whether the Play Store is installed on the current device.
      */
+
     private fun isPlayStoreInstalled(): Boolean {
         return try {
             activity!!.packageManager.getPackageInfo("com.android.vending", 0)
@@ -158,6 +163,7 @@ public class RateMyAppPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
      *
      * @return 0 if everything is okay, 1 if the Play Store has not been opened, but the URL has been launched and 2 if it's not possible to open any of them.
      */
+
     private fun goToPlayStore(applicationId: String?): Int {
         if (activity == null) {
             return 2

@@ -82,14 +82,11 @@ class RateMyAppDialog extends StatelessWidget {
     );
 
     return AlertDialog(
-      title: Padding(
-        padding: dialogStyle.titlePadding,
-        child: Text(
-          title,
-          style: dialogStyle.titleStyle,
-          textAlign: dialogStyle.titleAlign,
-        ),
-      ),
+      title: Row(children: [
+        Icon(Icons.star, color: Colors.amber),
+        SizedBox(width: 10),
+        Text(title)
+      ],),
       content: contentBuilder(context, content),
       contentPadding: dialogStyle.contentPadding,
       shape: dialogStyle.dialogShape,
@@ -104,17 +101,17 @@ class RateMyAppDialog extends StatelessWidget {
           validator: () =>
               listener == null || listener!(RateMyAppDialogButton.rate),
         ),
+        RateMyAppNoButton(
+          rateMyApp,
+          text: noButton,
+          validator: () =>
+          listener == null || listener!(RateMyAppDialogButton.no),
+        ),
         RateMyAppLaterButton(
           rateMyApp,
           text: laterButton,
           validator: () =>
               listener == null || listener!(RateMyAppDialogButton.later),
-        ),
-        RateMyAppNoButton(
-          rateMyApp,
-          text: noButton,
-          validator: () =>
-              listener == null || listener!(RateMyAppDialogButton.no),
         ),
       ];
 }
